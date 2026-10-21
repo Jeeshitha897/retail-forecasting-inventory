@@ -1,0 +1,6 @@
+store_id,sku_id,service_level,z_score,daily_mean_demand,daily_std_error,lead_time_days,safety_stock_units,reorder_point_units,eoq_units,average_inventory_units,working_capital_locked ($),annual_order_cost ($),annual_holding_cost ($),total_annual_policy_cost ($)
+STORE_01,SKU_GROC_01,0.95,1.645,174.25,21.32,3,61,584,285,203.5,549.45,670.35,109.89,780.24
+STORE_01,SKU_ELEC_02,0.95,1.645,26.15,6.85,10,48,310,57,76.5,7497.0,2010.53,1499.4,3509.93
+STORE_01,SKU_APPR_03,0.95,1.645,65.20,11.40,7,54,511,150,129.0,2451.0,1031.33,490.2,1521.53
+STORE_01,SKU_BEVG_04,0.95,1.645,232.10,28.60,2,67,532,382,258.0,361.2,561.42,72.24,633.66
+STORE_01,SKU_HOME_05,0.95,1.645,46.40,8.90,6,38,317,131,103.5,1397.25,647.33,279.45,926.78
