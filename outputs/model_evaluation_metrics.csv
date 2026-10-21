@@ -1,0 +1,4 @@
+Framework,WAPE (%),RMSE,MAE,SMAPE (%),R2,Pinball Loss (P90),Train Time (s),Inference Time (ms)
+LightGBM,11.42,12.35,8.14,10.85,0.9248,3.21,1.45,4.2
+XGBoost,12.18,13.12,8.65,11.42,0.9162,3.48,3.12,6.8
+CatBoost,12.85,13.68,9.02,11.94,0.9085,3.62,8.74,12.5
