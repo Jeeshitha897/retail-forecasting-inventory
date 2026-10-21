@@ -1,0 +1,58 @@
+"""XGBoost Demand Forecasting Wrapper.
+Supports point regression and quantile forecasting with histogram-based splitting.
+Supervised by: Dr. P. Sudhakar
+"""
+
+import numpy as np
+import pandas as pd
+from typing import Dict, Any, Optional
+
+try:
+    import xgboost as xgb
+    HAS_XGB = True
+except ImportError:
+    HAS_XGB = False
+    from sklearn.ensemble import HistGradientBoostingRegressor
+
+import config
+
+class XGBoostForecaster:
+    def __init__(self, params: Optional[Dict[str, Any]] = None, quantile: Optional[float] = None):
+        self.quantile = quantile
+        self.params = params or config.XGB_PARAMS.copy()
+        self.model = None
+
+    def fit(self, X_train: pd.DataFrame, y_train: pd.Series, X_val: Optional[pd.DataFrame] = None, y_val: Optional[pd.Series] = None):
+        if HAS_XGB:
+            xgb_kwargs = self.params.copy()
+            if self.quantile is not None:
+                # XGBoost quantile regression objective
+                xgb_kwargs["objective"] = "reg:quantileerror"
+                xgb_kwargs["quantile_alpha"] = self.quantile
+            else:
+                xgb_kwargs["objective"] = "reg:squarederror"
+
+            self.model = xgb.XGBRegressor(**xgb_kwargs)
+            eval_set = [(X_val, y_val)] if X_val is not None and y_val is not None else None
+            self.model.fit(
+                X_train, y_train,
+                eval_set=eval_set,
+                verbose=False
+            )
+        else:
+            loss = f"quantile" if self.quantile is not None else "squared_error"
+            quantile_val = self.quantile if self.quantile is not None else 0.5
+            self.model = HistGradientBoostingRegressor(
+                loss=loss,
+                quantile=quantile_val,
+                max_iter=self.params.get("n_estimators", 200),
+                learning_rate=self.params.get("learning_rate", 0.05),
+                random_state=config.RANDOM_SEED
+            )
+            self.model.fit(X_train, y_train)
+
+        return self
+
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
+        preds = self.model.predict(X)
+        return np.maximum(0, preds)  # Demand cannot be negative
